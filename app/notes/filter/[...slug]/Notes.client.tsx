@@ -10,10 +10,10 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import css from './NotesPage.module.css';
+import Link from 'next/link';
 
 export default function FilteredNotesClient({ tag }: { tag?: string }) {
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState('');
 
   const { data, error, isLoading, isSuccess } = useQuery({
@@ -22,8 +22,6 @@ export default function FilteredNotesClient({ tag }: { tag?: string }) {
     placeholderData: keepPreviousData,
     refetchOnMount: false,
   });
-
-  const closeModal = () => setIsModalOpen(false);
 
   const handleChange = useDebouncedCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,15 +42,10 @@ export default function FilteredNotesClient({ tag }: { tag?: string }) {
             onPageChange={setCurrentPage}
           />
         )}
-        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+        <Link className={css.button} href="/notes/action/create">
           Create note +
-        </button>
+        </Link>
       </header>
-      {isModalOpen && (
-        <Modal onClose={closeModal}>
-          <NoteForm onCancel={closeModal} />
-        </Modal>
-      )}
       {isLoading && <p>Loading...</p>}
       {error && <p>Sorry something went wrong, try again later.</p>}
       {isSuccess && data.notes.length > 0 && <NoteList notes={data.notes} />}

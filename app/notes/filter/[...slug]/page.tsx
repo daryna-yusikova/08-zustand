@@ -1,5 +1,5 @@
 import NoteList from '@/components/NoteList/NoteList';
-import { fetchNotes } from '@/lib/api';
+import { fetchNoteById, fetchNotes } from '@/lib/api';
 import {
   dehydrate,
   HydrationBoundary,
@@ -7,9 +7,36 @@ import {
 } from '@tanstack/react-query';
 import css from './NotesPage.module.css';
 import FilteredNotesClient from './Notes.client';
+import { Metadata } from 'next';
 
 interface NotesFilterProps {
   params: Promise<{ slug: string[] }>;
+}
+
+export async function generateMetadata({
+  params,
+}: NotesFilterProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  return {
+    title: `Notes: ${slug}`,
+    description: `Notes tagged: ${slug} `,
+    openGraph: {
+      title: `Notes: ${slug}`,
+      description: `Notes tagged: ${slug} `,
+      url: `https://notehub.com/notes/${slug}`,
+      siteName: 'NoteHub',
+      images: [
+        {
+          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: `${slug}`,
+        },
+      ],
+      type: 'article',
+    },
+  };
 }
 
 export default async function NotesFilter({ params }: NotesFilterProps) {
