@@ -1,7 +1,5 @@
 'use client';
 
-import Modal from '@/components/Modal/Modal';
-import NoteForm from '@/components/NoteForm/NoteForm';
 import NoteList from '@/components/NoteList/NoteList';
 import Pagination from '@/components/Pagination/Pagination';
 import SearchBox from '@/components/SearchBox/SearchBox';
@@ -23,18 +21,16 @@ export default function FilteredNotesClient({ tag }: { tag?: string }) {
     refetchOnMount: false,
   });
 
-  const handleChange = useDebouncedCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchValue(event.target.value.trim());
-      setCurrentPage(1);
-    },
-    500
-  );
+  const handleSearch = useDebouncedCallback((value: string) => {
+    setSearchValue(value.trim());
+    setCurrentPage(1);
+  }, 500);
+
   const totalPages = data?.totalPages || 0;
   return (
     <>
       <header className={css.toolbar}>
-        <SearchBox value={searchValue} onSearch={handleChange} />{' '}
+        <SearchBox value={searchValue} onSearch={handleSearch} />
         {totalPages > 1 && (
           <Pagination
             totalPages={totalPages}
